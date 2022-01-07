@@ -1,4 +1,8 @@
 import React, {useState} from 'react';
+import auth from '@react-native-firebase/auth';
+import {firebase} from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+
 import {
   Text,
   View,
@@ -14,34 +18,73 @@ import FormInput from '../Component/FormInput';
 export default function LoginScreen({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errortext, setErrortext] = useState('');
+  const [erroremail, setErrorEmail] = useState('');
+  const [errorpassword, setErrorPassword] = useState('');
 
+  // const firestore_ref = firestore().collection('Users');
 
   const handleSubmitPress = () => {
-    setErrortext('');
     if (!email) {
-      alert('Please fill Email');
-      return;
+      // alert('Please fill Email');
+      setErrorEmail('please enter Email');
+
+      return false;
     }
     if (!password) {
-      alert('Please fill Password');
-      return;
+      // alert('Please fill Password');
+      setErrorPassword('please enter Password');
+      setErrorEmail(false);
+      return false;
     }
+    setErrorEmail(false);
+    setErrorPassword(false);
+    // __doCreateUser(email, password);
+  };
+
+  // const __doCreateUser = async (email, password) => {
+  //   try {
+  //     let response = await auth().createUserWithEmailAndPassword(
+  //       email,
+  //       password,
+  //     );
+  //     if (response && response.user) {
+  //       Alert.alert('Success ✅', 'Account created successfully');
+  //     }
+  //   } catch (e) {
+  //     console.error(e.message);
+  //   }
+  // };
+
+  async function LoginUser() {
+    await firebase
+      .auth()
+      .signInWithEmailAndPassword(email.trim(), password)
+      .then(user => {
+        alert('WELCOME');
+      })
+      .catch(error => {
+        alert(error);
+      });
   }
 
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Image style={styles.image} source={require('../assets/login.png')} />
+        <Image
+          style={styles.image}
+          source={require('../assets/facebook.png')}
+        />
 
         <View style={styles.inputView}>
           <FormInput
             style={styles.TextInput}
             placeholderText={'Email'}
-            
             placeholdertextcolor="#003f5c"
             onchange={email => setEmail(email)}
           />
+          {erroremail != '' ? (
+            <Text style={styles.errorTextStyle}>{erroremail}</Text>
+          ) : null}
         </View>
 
         <View style={styles.inputView}>
@@ -51,13 +94,20 @@ export default function LoginScreen({navigation}) {
             placeholdertextcolor="#003f5c"
             onchange={password => setPassword(password)}
           />
+          {errorpassword != '' ? (
+            <Text style={styles.errorTextStyle}>{errorpassword}</Text>
+          ) : null}
         </View>
 
         <TouchableOpacity>
           <Text style={styles.forgot_button}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <FormButton title={'LOGIN'} backgroundColor={'#FF1493'} onPress={handleSubmitPress} />
+        <FormButton
+          title={'LOGIN'}
+          backgroundColor={'#FF1493'}
+          onPress={LoginUser}
+        />
 
         <Text
           style={styles.registerTextStyle}
@@ -79,6 +129,7 @@ const styles = StyleSheet.create({
 
   image: {
     marginBottom: 40,
+    marginTop: 10,
   },
 
   inputView: {
@@ -119,5 +170,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     alignSelf: 'center',
     padding: 10,
+  },
+  errorTextStyle: {
+    color: 'red',
+    textAlign: 'center',
+    fontSize: 14,
   },
 });

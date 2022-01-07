@@ -11,64 +11,127 @@ import {
 import FormButton from '../Component/FormButton';
 import FormInput from '../Component/FormInput';
 
-export default function RegisterScreen() {
+export default function RegisterScreen({navigation}) {
   const [username, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [conformpassword, setConformPassword] = useState('');
+  const [errorusername, setErrorUsername] = useState('');
+  const [erroremail, setErrorEmail] = useState('');
+  const [errorpassword, setErrorPassword] = useState('');
+  const [errorconformpassword, setErrorconformpassword] = useState('');
+
+  const handleSubmitPress = () => {
+    if (!username) {
+      // alert('Please fill Email');
+      setErrorUsername('Please Enter UserName');
+      return false;
+    }
+
+    if (!email) {
+      // alert('Please fill Email');
+      setErrorEmail('Please Enter Email');
+      setErrorUsername(false);
+      return false;
+    }
+
+    if (!password) {
+      // alert('Please fill Password');
+      setErrorPassword('Please Enter Password');
+      setErrorEmail(false);
+      setErrorUsername(false);
+      return false;
+    }
+
+    if (!conformpassword) {
+      // alert('Please fill Email');
+      setErrorconformpassword('Please Enter ConformPassword');
+      setErrorPassword(false);
+      setErrorEmail(false);
+      setErrorUsername(false);
+      return false;
+    }
+
+    setErrorEmail(false);
+    setErrorPassword(false);
+    setErrorconformpassword(false);
+    setErrorUsername(false);
+    navigation.navigate('LoginScreen');
+  };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.inputView}>
-        <FormInput
-          style={styles.TextInput}
-          placeholderText={'Username'}
-          placeholdertextcolor="#003f5c"
-          onchange={username => setUserName(username)}
+    <ScrollView>
+      <View style={styles.container}>
+        <Image
+          style={styles.image}
+          source={require('../assets/facebook.png')}
         />
-      </View>
 
-      <View style={styles.inputView}>
-        <FormInput
-          style={styles.TextInput}
-          placeholderText={'Email address'}
-          placeholdertextcolor="#003f5c"
-          onchange={email => setEmail(email)}
-        />
-      </View>
+        <View style={styles.inputView}>
+          <FormInput
+            style={styles.TextInput}
+            placeholderText={'Username'}
+            placeholdertextcolor="#003f5c"
+            onchange={username => setUserName(username)}
+          />
+          {errorusername != '' ? (
+            <Text style={styles.errorTextStyle}>{errorusername}</Text>
+          ) : null}
+        </View>
 
-      <View style={styles.inputView}>
-        <FormInput
-          style={styles.TextInput}
-          placeholderText={'Password'}
-          placeholdertextcolor="#003f5c"
-          onchange={password => setPassword(password)}
-        />
-      </View>
+        <View style={styles.inputView}>
+          <FormInput
+            style={styles.TextInput}
+            placeholderText={'Email address'}
+            placeholdertextcolor="#003f5c"
+            onchange={email => setEmail(email)}
+          />
+          {erroremail != '' ? (
+            <Text style={styles.errorTextStyle}>{erroremail}</Text>
+          ) : null}
+        </View>
 
-      <View style={styles.inputView}>
-        <FormInput
-          style={styles.TextInput}
-          placeholderText={'Conform Password'}
-          placeholdertextcolor="#003f5c"
-          onchange={conformpassword => setConformPassword(conformpassword)}
-        />
-      </View>
+        <View style={styles.inputView}>
+          <FormInput
+            style={styles.TextInput}
+            placeholderText={'Password'}
+            placeholdertextcolor="#003f5c"
+            onchange={password => setPassword(password)}
+          />
+          {errorpassword != '' ? (
+            <Text style={styles.errorTextStyle}>{errorpassword}</Text>
+          ) : null}
+        </View>
 
-      {/* <TouchableOpacity>
+        <View style={styles.inputView}>
+          <FormInput
+            style={styles.TextInput}
+            placeholderText={'Conform Password'}
+            placeholdertextcolor="#003f5c"
+            onchange={conformpassword => setConformPassword(conformpassword)}
+          />
+          {errorconformpassword != '' ? (
+            <Text style={styles.errorTextStyle}>{errorconformpassword}</Text>
+          ) : null}
+        </View>
+
+        {/* <TouchableOpacity>
           <Text style={styles.forgot_button}>Forgot Password?</Text>
         </TouchableOpacity> */}
 
-      <FormButton title={'REGISTER'} backgroundColor={'#FF1493'} />
+        <FormButton
+          title={'REGISTER'}
+          backgroundColor={'#FF1493'}
+          onPress={handleSubmitPress}
+        />
 
-      <Text
-        style={styles.registerTextStyle}
-        onPress={() => navigation.navigate('RegisterScreen')}>
-        Sign In
-      </Text>
-
-      
-    </View>
+        <Text
+          style={styles.registerTextStyle}
+          onPress={() => navigation.navigate('LoginScreen')}>
+          Already Registered? Click here to login
+        </Text>
+      </View>
+    </ScrollView>
   );
 }
 
@@ -123,5 +186,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     alignSelf: 'center',
     padding: 10,
+  },
+  errorTextStyle: {
+    color: 'red',
+    textAlign: 'center',
+    fontSize: 14,
   },
 });
