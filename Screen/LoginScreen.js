@@ -1,7 +1,4 @@
-import React, {useState} from 'react';
-import auth from '@react-native-firebase/auth';
-import {firebase} from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
+import React, {useState,useEffect, useReducer} from 'react';
 
 import {
   Text,
@@ -12,8 +9,10 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import {useContext} from 'react/cjs/react.development';
 import FormButton from '../Component/FormButton';
 import FormInput from '../Component/FormInput';
+import {AuthContext} from '../navigation/AuthProvider';
 
 export default function LoginScreen({navigation}) {
   const [email, setEmail] = useState('');
@@ -21,8 +20,7 @@ export default function LoginScreen({navigation}) {
   const [erroremail, setErrorEmail] = useState('');
   const [errorpassword, setErrorPassword] = useState('');
 
-  // const firestore_ref = firestore().collection('Users');
-
+  const {login} = useContext(AuthContext);
   const handleSubmitPress = () => {
     if (!email) {
       // alert('Please fill Email');
@@ -30,6 +28,7 @@ export default function LoginScreen({navigation}) {
 
       return false;
     }
+
     if (!password) {
       // alert('Please fill Password');
       setErrorPassword('please enter Password');
@@ -38,36 +37,14 @@ export default function LoginScreen({navigation}) {
     }
     setErrorEmail(false);
     setErrorPassword(false);
-    // __doCreateUser(email, password);
+
+    navigation.navigate('HomeScreen');
+    
+
+    
   };
 
-  // const __doCreateUser = async (email, password) => {
-  //   try {
-  //     let response = await auth().createUserWithEmailAndPassword(
-  //       email,
-  //       password,
-  //     );
-  //     if (response && response.user) {
-  //       Alert.alert('Success ✅', 'Account created successfully');
-  //     }
-  //   } catch (e) {
-  //     console.error(e.message);
-  //   }
-  // };
-
-  async function LoginUser() {
-    await firebase
-      .auth()
-      .signInWithEmailAndPassword(email.trim(), password)
-      .then(user => {
-        alert('WELCOME');
-      })
-      .catch(error => {
-        alert(error);
-      });
-  }
-
-  return (
+return (
     <ScrollView>
       <View style={styles.container}>
         <Image
@@ -106,7 +83,11 @@ export default function LoginScreen({navigation}) {
         <FormButton
           title={'LOGIN'}
           backgroundColor={'#FF1493'}
-          onPress={LoginUser}
+          onPress={() => {
+            handleSubmitPress();
+            login(email, password);
+            
+          }}
         />
 
         <Text

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   Text,
   View,
@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import FormButton from '../Component/FormButton';
 import FormInput from '../Component/FormInput';
+import {AuthContext} from '../navigation/AuthProvider';
 
 export default function RegisterScreen({navigation}) {
   const [username, setUserName] = useState('');
@@ -21,6 +22,7 @@ export default function RegisterScreen({navigation}) {
   const [errorpassword, setErrorPassword] = useState('');
   const [errorconformpassword, setErrorconformpassword] = useState('');
 
+  const {register} = useContext(AuthContext);
   const handleSubmitPress = () => {
     if (!username) {
       // alert('Please fill Email');
@@ -56,7 +58,10 @@ export default function RegisterScreen({navigation}) {
     setErrorPassword(false);
     setErrorconformpassword(false);
     setErrorUsername(false);
+   
+
     navigation.navigate('LoginScreen');
+
   };
 
   return (
@@ -122,7 +127,10 @@ export default function RegisterScreen({navigation}) {
         <FormButton
           title={'REGISTER'}
           backgroundColor={'#FF1493'}
-          onPress={handleSubmitPress}
+          onPress={() =>{
+            handleSubmitPress();
+            register(email,password);
+          }}
         />
 
         <Text
